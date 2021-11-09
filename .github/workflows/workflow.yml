@@ -1,0 +1,23 @@
+name: workflow
+
+on: 
+  push:
+    branches: 
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy-sandbox:
+    uses: gitlearndemojodowns/testworkflow2/.github/workflows/deploy.yml@main
+    with:
+      environmentName: Sandbox
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
+  deploy-production:
+    uses: gitlearndemojodowns/testworkflow2/.github/workflows/deploy.yml@main
+    needs: deploy-sandbox
+    with:
+      environmentName: Production
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}

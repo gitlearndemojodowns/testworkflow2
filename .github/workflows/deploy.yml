@@ -1,0 +1,28 @@
+name: deploy
+
+on:
+  workflow_call:
+    inputs:
+      environmentName:
+        required: true
+        type: string
+    secrets:
+      AZURE_CREDENTIALS:
+        required: true
+
+jobs:
+  deploy:
+    environment: ${{ inputs.environmentType }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - uses: azure/arm-deploy@v1
+      with:
+        failOnStdErr: false
+        deploymentName: ${{ github.run_number }}
+        resourceGroupName: ${{ inputs.environmentName }}_rg
+        template: ./deploy/main.bicep
+        parameters: deploy/parameters.${{ inputs.environmentName }}.json
